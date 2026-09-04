@@ -1,0 +1,72 @@
+deptrac:
+  paths:
+    - ./src
+
+  exclude_files:
+    - '#.*Kernel\.php$#'
+
+  layers:
+    - name: Controller
+      collectors:
+        - type: classLike
+          value: '^App\\Controller\\'
+    - name: Message
+      collectors:
+        - type: classLike
+          value: '^App\\Message\\'
+    - name: MessageHandler
+      collectors:
+        - type: classLike
+          value: '^App\\MessageHandler\\'
+    - name: Repository
+      collectors:
+        - type: classLike
+          value: '^App\\Repository\\'
+    - name: Entity
+      collectors:
+        - type: classLike
+          value: '^App\\Entity\\'
+    - name: Notification
+      collectors:
+        - type: classLike
+          value: '^App\\Notification\\'
+    - name: Enum
+      collectors:
+        - type: classLike
+          value: '^App\\Enum\\'
+    - name: Exception
+      collectors:
+        - type: classLike
+          value: '^App\\Exception\\'
+
+  # Doctrine wiąże encję z repozytorium przez atrybut #[ORM\Entity(repositoryClass: ...)].
+  # Reguła "Entity nie zależy od Repository" pozostaje w mocy; wyjątek jest zawężony
+  # do tej jednej, wymuszonej przez framework pary klas.
+  skip_violations:
+    App\Entity\SalesDocument:
+      - App\Repository\SalesDocumentRepository
+
+  ruleset:
+    Controller:
+      - Message
+      - Repository
+      - Entity
+      - Enum
+      - Exception
+    Message:
+      - Enum
+    MessageHandler:
+      - Message
+      - Repository
+      - Entity
+      - Notification
+      - Enum
+      - Exception
+    Repository:
+      - Entity
+    Entity:
+      - Enum
+    Notification: ~
+    Enum: ~
+    Exception:
+      - Enum

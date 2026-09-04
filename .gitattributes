@@ -1,0 +1,7 @@
+# Source export policy
+/vendor/ export-ignore
+/var/ export-ignore
+/exports/ export-ignore
+/.git/ export-ignore
+/.idea/ export-ignore
+/.DS_Store export-ignore

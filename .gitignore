@@ -1,0 +1,25 @@
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+# Local source exports
+/exports/
+
+# Lokalne artefakty runtime narzędzi jakości
+/.deptrac.cache
+
+# Metadane IDE i systemu plików
+/.idea/
+.DS_Store

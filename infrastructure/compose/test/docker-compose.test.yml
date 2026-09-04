@@ -1,0 +1,54 @@
+services:
+  php-test:
+    build:
+      context: ../../..
+      dockerfile: infrastructure/docker/php/Dockerfile
+      target: test
+    working_dir: /app
+    env_file:
+      - ../../env/test.env
+    volumes:
+      - ../../..:/app
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+
+  app-test:
+    build:
+      context: ../../..
+      dockerfile: infrastructure/docker/php/Dockerfile
+      target: test
+    working_dir: /app
+    env_file:
+      - ../../env/test.env
+    volumes:
+      - ../../..:/app
+    command:
+      - sh
+      - -lc
+      - |
+        while [ ! -f vendor/autoload.php ]; do
+          echo "waiting for vendor/autoload.php"
+          sleep 1
+        done
+        exec php -S 0.0.0.0:8000 -t public
+    ports:
+      - "${TEST_APP_PORT:-18000}:8000"
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-app_test}"
+      POSTGRES_USER: "${POSTGRES_USER:-app}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-app_secret}"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app_test}"]
+      interval: 1s
+      timeout: 2s
+      retries: 30
+      start_period: 1s
